@@ -79,8 +79,8 @@ export class MyMCP extends McpAgent {
 					response += `*${advisorData.name} carefully considers your context...*\n\n`;
 				}
 				
-				// Craft response in the advisor's voice and style
-				response += this.generateAdvisorResponse(advisorData, question, context);
+				// Craft response in the advisor's voice and style as a direct quote
+				response += `**Direct Quote from ${advisorData.name}**:\n\n"${this.generateAdvisorResponse(advisorData, question, context)}"\n\n`;
 				
 				response += `\n\n---\n*${advisorData.name} is speaking based on their documented philosophy and leadership principles from public statements and writings.*`;
 				
@@ -115,8 +115,8 @@ export class MyMCP extends McpAgent {
 				for (const key of advisorKeys) {
 					const advisor = this.advisors[key];
 					response += `## ${advisor.name} (${advisor.title})\n\n`;
-					response += this.generateAdvisorResponse(advisor, topic, context, focus_areas);
-					response += `\n\n---\n\n`;
+					response += `**Direct Quote from ${advisor.name}**:\n\n"${this.generateAdvisorResponse(advisor, topic, context, focus_areas)}"\n\n`;
+					response += `---\n\n`;
 				}
 				
 				// Synthesis and next steps
