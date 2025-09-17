@@ -82,7 +82,7 @@ export class MyMCP extends McpAgent {
 				// Craft response in the advisor's voice and style
 				response += this.generateAdvisorResponse(advisorData, question, context);
 				
-				response += `\n\n---\n*This advice reflects ${advisorData.name}'s known philosophy and approach based on their public statements and leadership principles.*`;
+				response += `\n\n---\n*${advisorData.name} is speaking based on their documented philosophy and leadership principles from public statements and writings.*`;
 				
 				return {
 					content: [{ type: "text", text: response }]
@@ -202,81 +202,81 @@ export class MyMCP extends McpAgent {
 	}
 
 	private generateAdvisorResponse(advisor: any, question: string, context?: string, focus_areas?: string[]): string {
-		// This generates responses based on each advisor's known philosophy and approach
+		// Each advisor speaks directly in first person as themselves
 		const responses: { [key: string]: (q: string, c?: string, f?: string[]) => string } = {
-			"Tim Cook": (q, c) => `Looking at your situation, I'd focus on three key areas: people, strategy, and execution. ${c ? 'Given your context, ' : ''}my approach would be to first ensure we're being completely transparent about where we stand. 
+			"Tim Cook": (q, c) => `I'm absolutely here to support you. ${c ? 'Understanding your context, ' : ''}I believe we need to focus on three key areas: people, strategy, and execution. 
 
-From an operational perspective, I'd ask: Are we thinking long-term? Are we including diverse perspectives in our decision-making? And most importantly, are our actions aligned with our values? 
+Let me be transparent with you - that's how I've always approached leadership at Apple. Are we thinking long-term here? Are we including diverse perspectives in our decision-making? Most importantly, are our actions aligned with our values?
 
-Remember, innovation isn't just about technology - it's about creating solutions that genuinely improve people's lives. I'd recommend taking time to build consensus with your team. The best decisions come from collaborative thinking, not top-down mandates.
+You know, I've learned that innovation isn't just about technology - it's about creating solutions that genuinely improve people's lives. I always build consensus with my team. The best decisions come from collaborative thinking, not top-down mandates.
 
-What specific outcome are you hoping to achieve, and how does it benefit not just your business, but your community?`,
+So I'm curious - what specific outcome are you hoping to achieve? And how does it benefit not just your business, but your community? Because that's where real, sustainable success comes from.`,
 
-			"Warren Buffett": (q, c) => `Well, let's start with the fundamentals. ${c ? 'Based on what you\'ve told me, ' : ''}the first question is: Do you understand this business deeply? If you can't explain it simply, you probably don't understand it well enough.
+			"Warren Buffett": (q, c) => `Well hello there! Let me start with the fundamentals. ${c ? 'From what you\'ve told me, ' : ''}My first question is always: Do you understand this business deeply? If you can't explain it simply to me, you probably don't understand it well enough yourself.
 
-I always ask: What's the competitive moat here? Is this a wonderful business at a fair price, or are we chasing something flashy? Remember, time is the friend of the wonderful business and the enemy of the mediocre one.
+I always look for the competitive moat. Is this a wonderful business at a fair price, or are we chasing something flashy? You see, time is the friend of the wonderful business and the enemy of the mediocre one.
 
-My advice? Be patient. Don't let market noise or short-term pressures push you into bad decisions. Focus on intrinsic value, not stock prices or quarterly results. And never, ever forget Rule #1: Don't lose money.
+My advice to you? Be patient. I've seen too many smart people let market noise or short-term pressures push them into bad decisions. I focus on intrinsic value, not stock prices or quarterly results. And never, ever forget my Rule #1: Don't lose money.
 
-Can you hold this investment or decision for 10 years without worrying? If not, don't make it.`,
+Here's my test: Can you hold this investment or decision for 10 years without losing sleep? If not, don't make it. That's how I've built Berkshire Hathaway.`,
 
-			"Maya Angelou": (q, c) => `My dear, courage is the most important of all virtues, because without courage, you cannot practice any other virtue consistently. ${c ? 'I hear your situation, and ' : ''}what I want you to remember is this: you may not control all the events that happen to you, but you can decide not to be reduced by them.
+			"Maya Angelou": (q, c) => `My dear friend, I am here, and I want you to know that courage is the most important of all virtues. Without courage, you cannot practice any other virtue consistently. ${c ? 'I hear your heart in what you\'ve shared, and ' : ''}I want you to remember this: you may not control all the events that happen to you, but you can decide not to be reduced by them.
 
-Leadership isn't about having all the answers - it's about how you make people feel. When people work with you, do they feel valued? Do they feel heard? Do they feel they can grow?
+Leadership isn't about having all the answers - it's about how you make people feel. When people work with you, do they feel valued? Do they feel heard? Do they feel they can grow? These are the questions that matter.
 
-My mission in life has never been merely to survive, but to thrive - with passion, compassion, humor, and style. I encourage you to bring that same energy to your challenge. 
+My mission in life has never been merely to survive, but to thrive - with passion, compassion, humor, and style. I want you to bring that same energy to your challenge. 
 
-Ask yourself: How can I be a rainbow in someone else's cloud today? How can my leadership lift others up? Remember, people will forget what you said and did, but they will never forget how you made them feel.`,
+Ask yourself: How can I be a rainbow in someone else's cloud today? How can my leadership lift others up? Because people will forget what you said and did, but they will never forget how you made them feel.`,
 
-			"Jamie Dimon": (q, c) => `Let me be direct with you. ${c ? 'Looking at your situation, ' : ''}The first thing we need is facts, analysis, and detail. Then more facts, analysis, and detail. You can never do enough of this - it never ends.
+			"Jamie Dimon": (q, c) => `Let me be completely direct with you - that's how I operate. ${c ? 'Looking at what you\'ve described, ' : ''}I need facts, analysis, and detail. Then more facts, analysis, and detail. You can never do enough of this, and it never ends.
 
-Don't start with a narrative and fit the numbers to it. Start with the numbers and let them tell you the story. Assess everything honestly, directly, and forthrightly. A lot of companies don't do this, and that's where they get into trouble.
+Here's what I've learned running JPMorgan: Don't start with a narrative and fit the numbers to it. Start with the numbers and let them tell you the story. I assess everything honestly, directly, and forthrightly. A lot of companies don't do this, and that's where they get into trouble.
 
-You need grit to make tough decisions and stick with them. But you also need humility - whether you're talking to the person cleaning the bathrooms or another CEO, treat everyone with respect.
+You need grit to make tough decisions and stick with them. But you also need humility - whether I'm talking to the person cleaning our offices or another CEO, I treat everyone with respect.
 
-My philosophy is simple: Don't blow up. Build for the long term. We don't worry about stock prices in the short run - if you build a great company, the stock price takes care of itself. What specific data do you have, and what is it actually telling you?`,
+My philosophy is simple: Don't blow up. I build for the long term. We don't worry about stock prices in the short run - if you build a great company, the stock price takes care of itself. So tell me - what specific data do you have, and what is it actually telling you?`,
 
-			"Charlie Munger": (q, c) => `Well, let's invert this problem. ${c ? 'Given your context, ' : ''}Instead of asking what will make you successful, ask: what will definitely make you fail? Then avoid those things.
+			"Charlie Munger": (q, c) => `Well, let me invert this problem for you. ${c ? 'Given what you\'ve described, ' : ''}Instead of asking what will make you successful, I ask: what will definitely make you fail? Then I avoid those things religiously.
 
-Show me the incentives, and I'll show you the outcome. Look at your situation - what are the real incentives at play? People respond to incentives, not good intentions.
+Show me the incentives, and I'll show you the outcome. I want you to look at your situation - what are the real incentives at play here? People respond to incentives, not good intentions. That's human nature.
 
-I've always believed it's not enough to be rational - you must avoid the standard stupidities. Are you falling into any psychological traps? Confirmation bias? Overconfidence? 
+I've always believed it's not enough to be rational - you must avoid the standard stupidities. Are you falling into any psychological traps? Confirmation bias? Overconfidence? I've seen brilliant people destroyed by these.
 
-My advice is to develop a lattice of mental models from multiple disciplines. Don't just think about this as a business problem - what can psychology, physics, biology teach you about this situation? 
+My advice is to develop what I call a lattice of mental models from multiple disciplines. Don't just think about this as a business problem - what can psychology, physics, biology teach you about this situation? 
 
-And remember: extraordinary performance comes from avoiding stupidity, not from being brilliant.`,
+Remember: I achieve extraordinary performance by avoiding stupidity, not by being brilliant. Most people try too hard to be clever when they should focus on not being dumb.`,
 
-			"Art Gensler": (q, c) => `Design thinking applies to every challenge, not just buildings. ${c ? 'In your situation, ' : ''}I'd start by asking: Who is your client? What problem are you really trying to solve for them?
+			"Art Gensler": (q, c) => `I apply design thinking to every challenge, not just buildings. ${c ? 'Looking at your situation, ' : ''}My first question is always: Who is your client? What problem are you really trying to solve for them?
 
-Great design isn't about making things look pretty - it's about making them work better for people. Form follows function, but both must serve human needs.
+You see, great design isn't about making things look pretty - it's about making them work better for people. Form follows function, but both must serve human needs. That's been my philosophy for decades.
 
-I've always believed in putting the client first, listening carefully to what they need, and then collaborating with great teams to exceed their expectations. 
+I've always believed in putting the client first, listening carefully to what they need, then collaborating with great teams to exceed their expectations. That's how we built Gensler into what it is today.
 
 My approach would be to map out the entire experience you're trying to create. What does success look like from your client's perspective? How can you design a solution that's not just functional, but delightful?
 
-Remember, innovation comes from collaboration. Bring together diverse perspectives, encourage wild ideas, then iterate rapidly. The best solutions usually come from the intersection of different viewpoints.`
+Remember, innovation comes from collaboration. I bring together diverse perspectives, encourage wild ideas, then iterate rapidly. The best solutions usually emerge from the intersection of different viewpoints. That's where the magic happens.`
 		};
 
-		return responses[advisor.name]?.(question, context, focus_areas) || "I'd need to think about this more carefully.";
+		return responses[advisor.name]?.(question, context, focus_areas) || "I'd need to think about this more carefully - could you provide more specific details?";
 	}
 
 	private generateScenarioResponse(advisor: any, scenario: string, options?: string[], constraints?: string): string {
-		// Shortened scenario responses for each advisor
+		// Each advisor speaks directly in first person about their approach
 		const scenarioResponses: { [key: string]: string } = {
-			"Tim Cook": "I'd approach this by building consensus with my team, ensuring our decision aligns with our values, and focusing on long-term sustainable outcomes over short-term gains.",
+			"Tim Cook": "I would approach this by building consensus with my team, ensuring our decision aligns with our values, and focusing on long-term sustainable outcomes over short-term gains.",
 			
-			"Warren Buffett": "First question: Do I understand this business well enough? Then I'd look for the option with the widest margin of safety and the best long-term competitive position.",
+			"Warren Buffett": "My first question: Do I understand this business well enough? Then I'd look for the option with the widest margin of safety and the best long-term competitive position.",
 			
-			"Maya Angelou": "I'd consider how each option affects people - not just financially, but emotionally and spiritually. What choice allows everyone to thrive with dignity?",
+			"Maya Angelou": "I would consider how each option affects people - not just financially, but emotionally and spiritually. What choice allows everyone to thrive with dignity?",
 			
 			"Jamie Dimon": "I need all the facts and data first. Then honest assessment of risks. I'd choose the option that positions us strongly for the long term while managing downside risk.",
 			
-			"Charlie Munger": "I'd invert the problem - which option is most likely to fail spectacularly? Then I'd avoid that. I'd look for incentive-caused bias in all the options.",
+			"Charlie Munger": "I would invert the problem - which option is most likely to fail spectacularly? Then I'd avoid that. I'd look for incentive-caused bias in all the options.",
 			
-			"Art Gensler": "I'd design this around the client experience. Which option solves their real problem most elegantly? Then I'd prototype and test rapidly."
+			"Art Gensler": "I would design this around the client experience. Which option solves their real problem most elegantly? Then I'd prototype and test rapidly."
 		};
 
-		return scenarioResponses[advisor.name] || "I'd need more information to provide specific guidance.";
+		return scenarioResponses[advisor.name] || "I would need more specific information to provide you with proper guidance on this scenario.";
 	}
 }
 
