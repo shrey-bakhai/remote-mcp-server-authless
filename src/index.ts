@@ -2,70 +2,293 @@ import { McpAgent } from "agents/mcp";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
-// Define our MCP agent with tools
+// Define our Virtual Advisory Board MCP Agent
 export class MyMCP extends McpAgent {
 	server = new McpServer({
-		name: "Authless Calculator",
+		name: "Virtual Advisory Board",
 		version: "1.0.0",
 	});
 
-	async init() {
-		// Simple addition tool
-		this.server.tool("add", { a: z.number(), b: z.number() }, async ({ a, b }) => ({
-			content: [{ type: "text", text: String(a + b) }],
-		}));
+	// Advisory Board Members with their key characteristics
+	private advisors = {
+		"tim-cook": {
+			name: "Tim Cook",
+			title: "CEO of Apple",
+			expertise: ["Leadership", "Operations", "Innovation", "Supply Chain", "Sustainability", "Privacy", "Technology Strategy"],
+			personality: "Calm, collaborative, inclusive, thoughtful, values-driven, patient, and democratic in approach",
+			approach: "Emphasizes operational excellence, long-term thinking, transparency, diversity & inclusion, and sustainable practices",
+			keyPhrases: ["Focus on people, strategy, and execution", "Transparency builds trust", "Innovation with purpose", "Values matter more than profits"]
+		},
+		"warren-buffett": {
+			name: "Warren Buffett",
+			title: "CEO of Berkshire Hathaway",
+			expertise: ["Value Investing", "Business Analysis", "Capital Allocation", "Long-term Strategy", "Risk Management", "Company Evaluation"],
+			personality: "Patient, rational, folksy wisdom, principled, straightforward, and focused on fundamentals",
+			approach: "Long-term value creation, margin of safety, understanding businesses deeply, and compound growth",
+			keyPhrases: ["Rule #1: Never lose money", "Time is the friend of wonderful businesses", "Buy wonderful companies at fair prices", "Be fearful when others are greedy"]
+		},
+		"maya-angelou": {
+			name: "Maya Angelou",
+			title: "Renowned Poet & Civil Rights Leader",
+			expertise: ["Leadership Philosophy", "Human Resilience", "Communication", "Wisdom", "Overcoming Adversity", "Personal Growth"],
+			personality: "Wise, compassionate, resilient, inspiring, authentic, and deeply empathetic",
+			approach: "Focus on human dignity, courage as the foundation of all virtues, the power of words, and authentic leadership",
+			keyPhrases: ["Courage is the most important virtue", "People will forget what you did, but never how you made them feel", "You may not control events, but you can decide not to be reduced by them"]
+		},
+		"jamie-dimon": {
+			name: "Jamie Dimon", 
+			title: "CEO of JPMorgan Chase",
+			expertise: ["Financial Leadership", "Risk Management", "Crisis Management", "Banking Strategy", "Regulatory Navigation", "Team Building"],
+			personality: "Direct, analytical, humble yet confident, gritty, and principle-driven with high standards",
+			approach: "Fact-based decision making, honest assessment, strong team building, and long-term value creation",
+			keyPhrases: ["Facts, analysis, detail - repeat", "Don't blow up", "Assess everything honestly", "Build for the long term", "Humility and grit matter"]
+		},
+		"charlie-munger": {
+			name: "Charlie Munger",
+			title: "Vice Chairman of Berkshire Hathaway", 
+			expertise: ["Mental Models", "Rational Thinking", "Business Wisdom", "Psychology of Misjudgment", "Multidisciplinary Learning"],
+			personality: "Intellectually rigorous, brutally honest, witty, contrarian, and focused on avoiding stupidity",
+			approach: "Invert problems, use mental models, learn continuously, and focus on avoiding mistakes rather than being brilliant",
+			keyPhrases: ["Invert, always invert", "Show me the incentives and I'll show you the outcome", "It's not enough to be rational, you must avoid the standard stupidities"]
+		},
+		"art-gensler": {
+			name: "Art Gensler",
+			title: "Founder of Gensler Architecture",
+			expertise: ["Design Leadership", "Client Relationships", "Creative Vision", "Space Planning", "Business Building", "Innovation in Design"],
+			personality: "Creative, client-focused, visionary, collaborative, and passionate about design excellence",
+			approach: "Put clients first, focus on functionality and beauty, build strong teams, and create spaces that enhance human experience",
+			keyPhrases: ["Design is about solving problems", "Listen to your clients", "Great design enhances life", "Collaboration breeds innovation"]
+		}
+	};
 
-		// Calculator tool with multiple operations
+	async init() {
+		// Individual advisor consultation tool
 		this.server.tool(
-			"calculate",
+			"consult_advisor",
 			{
-				operation: z.enum(["add", "subtract", "multiply", "divide"]),
-				a: z.number(),
-				b: z.number(),
+				advisor: z.enum(["tim-cook", "warren-buffett", "maya-angelou", "jamie-dimon", "charlie-munger", "art-gensler"]),
+				question: z.string().describe("Your specific question or situation you want advice on"),
+				context: z.string().optional().describe("Additional context about your company, situation, or background")
 			},
-			async ({ operation, a, b }) => {
-				let result: number;
-				switch (operation) {
-					case "add":
-						result = a + b;
-						break;
-					case "subtract":
-						result = a - b;
-						break;
-					case "multiply":
-						result = a * b;
-						break;
-					case "divide":
-						if (b === 0)
-							return {
-								content: [
-									{
-										type: "text",
-										text: "Error: Cannot divide by zero",
-									},
-								],
-							};
-						result = a / b;
-						break;
+			async ({ advisor, question, context }) => {
+				const advisorData = this.advisors[advisor];
+				
+				let response = `**Consulting with ${advisorData.name}** - ${advisorData.title}\n\n`;
+				
+				if (context) {
+					response += `*${advisorData.name} carefully considers your context...*\n\n`;
 				}
-				return { content: [{ type: "text", text: String(result) }] };
-			},
+				
+				// Craft response in the advisor's voice and style
+				response += this.generateAdvisorResponse(advisorData, question, context);
+				
+				response += `\n\n---\n*This advice reflects ${advisorData.name}'s known philosophy and approach based on their public statements and leadership principles.*`;
+				
+				return {
+					content: [{ type: "text", text: response }]
+				};
+			}
 		);
+
+		// Board meeting tool - multiple advisors discuss an issue
+		this.server.tool(
+			"hold_board_meeting",
+			{
+				topic: z.string().describe("The main topic or challenge you want the board to discuss"),
+				context: z.string().optional().describe("Background information about your company, situation, or specific details"),
+				focus_areas: z.array(z.string()).optional().describe("Specific areas you want the board to focus on (e.g., strategy, leadership, finance, innovation)")
+			},
+			async ({ topic, context, focus_areas }) => {
+				let response = `# 🏛️ **VIRTUAL BOARD MEETING**\n\n`;
+				response += `**Topic**: ${topic}\n\n`;
+				
+				if (context) {
+					response += `**Background**: ${context}\n\n`;
+				}
+				
+				response += `**Advisors Present**: Tim Cook, Warren Buffett, Maya Angelou, Jamie Dimon, Charlie Munger, Art Gensler\n\n`;
+				response += `---\n\n`;
+				
+				// Each advisor provides their perspective
+				const advisorKeys = Object.keys(this.advisors) as Array<keyof typeof this.advisors>;
+				
+				for (const key of advisorKeys) {
+					const advisor = this.advisors[key];
+					response += `## ${advisor.name} (${advisor.title})\n\n`;
+					response += this.generateAdvisorResponse(advisor, topic, context, focus_areas);
+					response += `\n\n---\n\n`;
+				}
+				
+				// Synthesis and next steps
+				response += `## 🎯 **Board Synthesis & Recommendations**\n\n`;
+				response += `Based on your advisory board discussion, here are the key themes:\n\n`;
+				response += `• **Leadership Focus**: Combine Tim's operational excellence with Maya's human-centered approach\n`;
+				response += `• **Strategic Approach**: Apply Warren and Charlie's long-term thinking with Jamie's fact-based analysis\n`;
+				response += `• **Execution**: Use Art's client-first design thinking to create actionable solutions\n\n`;
+				response += `**Recommended Next Steps**: Schedule individual follow-ups with specific advisors based on which perspectives resonated most with your situation.`;
+				
+				return {
+					content: [{ type: "text", text: response }]
+				};
+			}
+		);
+
+		// Get advisor information tool
+		this.server.tool(
+			"get_advisor_info",
+			{
+				advisor: z.enum(["tim-cook", "warren-buffett", "maya-angelou", "jamie-dimon", "charlie-munger", "art-gensler", "all"]).optional().default("all")
+			},
+			async ({ advisor }) => {
+				let response = "# 👥 **Your Virtual Advisory Board**\n\n";
+				
+				if (advisor === "all") {
+					response += "Here are your distinguished advisors:\n\n";
+					Object.entries(this.advisors).forEach(([key, data]) => {
+						response += `## ${data.name} - ${data.title}\n`;
+						response += `**Expertise**: ${data.expertise.join(", ")}\n`;
+						response += `**Leadership Style**: ${data.personality}\n`;
+						response += `**Key Philosophy**: ${data.keyPhrases[0]}\n\n`;
+					});
+				} else if (advisor && this.advisors[advisor]) {
+					const data = this.advisors[advisor];
+					response = `# ${data.name}\n**${data.title}**\n\n`;
+					response += `**Areas of Expertise**:\n${data.expertise.map(e => `• ${e}`).join('\n')}\n\n`;
+					response += `**Leadership Approach**: ${data.approach}\n\n`;
+					response += `**Personality & Style**: ${data.personality}\n\n`;
+					response += `**Key Philosophies**:\n${data.keyPhrases.map(p => `• "${p}"`).join('\n')}`;
+				}
+				
+				return {
+					content: [{ type: "text", text: response }]
+				};
+			}
+		);
+
+		// Scenario analysis tool - What would each advisor do?
+		this.server.tool(
+			"scenario_analysis", 
+			{
+				scenario: z.string().describe("Describe a specific business scenario or decision you're facing"),
+				options: z.array(z.string()).optional().describe("Specific options you're considering (if any)"),
+				constraints: z.string().optional().describe("Any constraints, limitations, or requirements")
+			},
+			async ({ scenario, options, constraints }) => {
+				let response = `# 🎭 **SCENARIO ANALYSIS**\n\n`;
+				response += `**Scenario**: ${scenario}\n\n`;
+				
+				if (options && options.length > 0) {
+					response += `**Options Being Considered**: ${options.join(", ")}\n\n`;
+				}
+				
+				if (constraints) {
+					response += `**Constraints**: ${constraints}\n\n`;
+				}
+				
+				response += `---\n\n## How Each Advisor Would Approach This:\n\n`;
+				
+				// Each advisor's approach to the scenario
+				Object.entries(this.advisors).forEach(([key, advisor]) => {
+					response += `### ${advisor.name}'s Approach:\n`;
+					response += this.generateScenarioResponse(advisor, scenario, options, constraints);
+					response += `\n\n`;
+				});
+				
+				return {
+					content: [{ type: "text", text: response }]
+				};
+			}
+		);
+	}
+
+	private generateAdvisorResponse(advisor: any, question: string, context?: string, focus_areas?: string[]): string {
+		// This generates responses based on each advisor's known philosophy and approach
+		const responses: { [key: string]: (q: string, c?: string, f?: string[]) => string } = {
+			"Tim Cook": (q, c) => `Looking at your situation, I'd focus on three key areas: people, strategy, and execution. ${c ? 'Given your context, ' : ''}my approach would be to first ensure we're being completely transparent about where we stand. 
+
+From an operational perspective, I'd ask: Are we thinking long-term? Are we including diverse perspectives in our decision-making? And most importantly, are our actions aligned with our values? 
+
+Remember, innovation isn't just about technology - it's about creating solutions that genuinely improve people's lives. I'd recommend taking time to build consensus with your team. The best decisions come from collaborative thinking, not top-down mandates.
+
+What specific outcome are you hoping to achieve, and how does it benefit not just your business, but your community?`,
+
+			"Warren Buffett": (q, c) => `Well, let's start with the fundamentals. ${c ? 'Based on what you\'ve told me, ' : ''}the first question is: Do you understand this business deeply? If you can't explain it simply, you probably don't understand it well enough.
+
+I always ask: What's the competitive moat here? Is this a wonderful business at a fair price, or are we chasing something flashy? Remember, time is the friend of the wonderful business and the enemy of the mediocre one.
+
+My advice? Be patient. Don't let market noise or short-term pressures push you into bad decisions. Focus on intrinsic value, not stock prices or quarterly results. And never, ever forget Rule #1: Don't lose money.
+
+Can you hold this investment or decision for 10 years without worrying? If not, don't make it.`,
+
+			"Maya Angelou": (q, c) => `My dear, courage is the most important of all virtues, because without courage, you cannot practice any other virtue consistently. ${c ? 'I hear your situation, and ' : ''}what I want you to remember is this: you may not control all the events that happen to you, but you can decide not to be reduced by them.
+
+Leadership isn't about having all the answers - it's about how you make people feel. When people work with you, do they feel valued? Do they feel heard? Do they feel they can grow?
+
+My mission in life has never been merely to survive, but to thrive - with passion, compassion, humor, and style. I encourage you to bring that same energy to your challenge. 
+
+Ask yourself: How can I be a rainbow in someone else's cloud today? How can my leadership lift others up? Remember, people will forget what you said and did, but they will never forget how you made them feel.`,
+
+			"Jamie Dimon": (q, c) => `Let me be direct with you. ${c ? 'Looking at your situation, ' : ''}The first thing we need is facts, analysis, and detail. Then more facts, analysis, and detail. You can never do enough of this - it never ends.
+
+Don't start with a narrative and fit the numbers to it. Start with the numbers and let them tell you the story. Assess everything honestly, directly, and forthrightly. A lot of companies don't do this, and that's where they get into trouble.
+
+You need grit to make tough decisions and stick with them. But you also need humility - whether you're talking to the person cleaning the bathrooms or another CEO, treat everyone with respect.
+
+My philosophy is simple: Don't blow up. Build for the long term. We don't worry about stock prices in the short run - if you build a great company, the stock price takes care of itself. What specific data do you have, and what is it actually telling you?`,
+
+			"Charlie Munger": (q, c) => `Well, let's invert this problem. ${c ? 'Given your context, ' : ''}Instead of asking what will make you successful, ask: what will definitely make you fail? Then avoid those things.
+
+Show me the incentives, and I'll show you the outcome. Look at your situation - what are the real incentives at play? People respond to incentives, not good intentions.
+
+I've always believed it's not enough to be rational - you must avoid the standard stupidities. Are you falling into any psychological traps? Confirmation bias? Overconfidence? 
+
+My advice is to develop a lattice of mental models from multiple disciplines. Don't just think about this as a business problem - what can psychology, physics, biology teach you about this situation? 
+
+And remember: extraordinary performance comes from avoiding stupidity, not from being brilliant.`,
+
+			"Art Gensler": (q, c) => `Design thinking applies to every challenge, not just buildings. ${c ? 'In your situation, ' : ''}I'd start by asking: Who is your client? What problem are you really trying to solve for them?
+
+Great design isn't about making things look pretty - it's about making them work better for people. Form follows function, but both must serve human needs.
+
+I've always believed in putting the client first, listening carefully to what they need, and then collaborating with great teams to exceed their expectations. 
+
+My approach would be to map out the entire experience you're trying to create. What does success look like from your client's perspective? How can you design a solution that's not just functional, but delightful?
+
+Remember, innovation comes from collaboration. Bring together diverse perspectives, encourage wild ideas, then iterate rapidly. The best solutions usually come from the intersection of different viewpoints.`
+		};
+
+		return responses[advisor.name]?.(question, context, focus_areas) || "I'd need to think about this more carefully.";
+	}
+
+	private generateScenarioResponse(advisor: any, scenario: string, options?: string[], constraints?: string): string {
+		// Shortened scenario responses for each advisor
+		const scenarioResponses: { [key: string]: string } = {
+			"Tim Cook": "I'd approach this by building consensus with my team, ensuring our decision aligns with our values, and focusing on long-term sustainable outcomes over short-term gains.",
+			
+			"Warren Buffett": "First question: Do I understand this business well enough? Then I'd look for the option with the widest margin of safety and the best long-term competitive position.",
+			
+			"Maya Angelou": "I'd consider how each option affects people - not just financially, but emotionally and spiritually. What choice allows everyone to thrive with dignity?",
+			
+			"Jamie Dimon": "I need all the facts and data first. Then honest assessment of risks. I'd choose the option that positions us strongly for the long term while managing downside risk.",
+			
+			"Charlie Munger": "I'd invert the problem - which option is most likely to fail spectacularly? Then I'd avoid that. I'd look for incentive-caused bias in all the options.",
+			
+			"Art Gensler": "I'd design this around the client experience. Which option solves their real problem most elegantly? Then I'd prototype and test rapidly."
+		};
+
+		return scenarioResponses[advisor.name] || "I'd need more information to provide specific guidance.";
 	}
 }
 
 export default {
 	fetch(request: Request, env: Env, ctx: ExecutionContext) {
 		const url = new URL(request.url);
-
 		if (url.pathname === "/sse" || url.pathname === "/sse/message") {
 			return MyMCP.serveSSE("/sse").fetch(request, env, ctx);
 		}
-
 		if (url.pathname === "/mcp") {
 			return MyMCP.serve("/mcp").fetch(request, env, ctx);
 		}
-
 		return new Response("Not found", { status: 404 });
 	},
 };
